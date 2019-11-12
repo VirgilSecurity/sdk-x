@@ -39,7 +39,7 @@ import Foundation
 /// Declares client error types and codes
 ///
 /// - constructingUrl: constructing url of endpoint failed
-/// - invalidPreviousHashHeader: error whilte extracting previousHash from response header
+/// - invalidPreviousHashHeader: error while extracting previousHash from response header
 /// - emptyIdentities: identities array is empty
 /// - invalidOptions: internal invalid options error
 @objc(VSSKeyknoxClientError) public enum KeyknoxClientError: Int, LocalizedError {
@@ -54,7 +54,7 @@ import Foundation
         case .constructingUrl:
             return "Constructing url of endpoint failed"
         case .invalidPreviousHashHeader:
-            return "Error whilte extracting previousHash from response header"
+            return "Error while extracting previousHash from response header"
         case .emptyIdentities:
             return "Identities should not be empty"
         case .invalidOptions:

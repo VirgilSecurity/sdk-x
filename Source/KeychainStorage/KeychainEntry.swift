@@ -72,8 +72,6 @@ import Foundation
     }
 }
 
-// swiftlint:disable missing_docs
-
 // MARK: - Equality override
 public extension KeychainEntry {
     /// Equality operator
@@ -90,5 +88,3 @@ public extension KeychainEntry {
             && lhs.modificationDate == rhs.modificationDate
     }
 }
-
-// swiftlint:enable missing_docs

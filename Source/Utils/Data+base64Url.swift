@@ -36,8 +36,6 @@
 
 import Foundation
 
-// swiftlint:disable missing_docs
-
 // MARK: - Data extension for base64Url encoding and decoding
 public extension Data {
     /// Encodes data in base64Url format
@@ -64,5 +62,3 @@ public extension Data {
         self.init(base64Encoded: base64EncodedWithPadding)
     }
 }
-
-// swiftlint:enable missing_docs

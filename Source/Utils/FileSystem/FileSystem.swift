@@ -36,22 +36,6 @@
 
 import VirgilCrypto
 
-/// Encryption credentials
-@objc(VSSFileSystemCredentials) open class FileSystemCredentials: NSObject {
-    /// Crypto
-    @objc public let crypto: VirgilCrypto
-
-    /// Keypair
-    @objc public let keyPair: VirgilKeyPair
-
-    @objc public init(crypto: VirgilCrypto, keyPair: VirgilKeyPair) {
-        self.crypto = crypto
-        self.keyPair = keyPair
-
-        super.init()
-    }
-}
-
 /// Class for saving data to the filesystem
 /// - Note: This class is NOT thread-safe
 /// - Tag: FileSystem
@@ -85,6 +69,8 @@ import VirgilCrypto
         self.userIdentifier = userIdentifier
         self.pathComponents = pathComponents
         self.credentials = credentials
+
+        super.init()
     }
 
     private func createSuppDir() throws -> URL {
@@ -123,16 +109,7 @@ import VirgilCrypto
         ]
     #endif
 
-        let dataToWrite: Data
-
-        if let credentials = self.credentials, !data.isEmpty {
-            dataToWrite = try credentials.crypto.authEncrypt(data,
-                                                             with: credentials.keyPair.privateKey,
-                                                             for: [credentials.keyPair.publicKey])
-        }
-        else {
-            dataToWrite = data
-        }
+        let dataToWrite = try self.encrypt(data: data)
 
         try dataToWrite.write(to: url, options: options)
     }
@@ -140,19 +117,40 @@ import VirgilCrypto
     private func readFile(url: URL) throws -> Data {
         let data = (try? Data(contentsOf: url)) ?? Data()
 
-        let dataToReturn: Data
+        return try self.decrypt(data: data)
+    }
 
-        if let credentials = self.credentials, !data.isEmpty {
-            dataToReturn = try credentials.crypto.authDecrypt(data,
-                                                              with: credentials.keyPair.privateKey,
-                                                              usingOneOf: [credentials.keyPair.publicKey],
-                                                              allowNotEncryptedSignature: true)
-        }
-        else {
-            dataToReturn = data
+    private func encrypt(data: Data) throws -> Data {
+        guard !data.isEmpty else {
+            return data
         }
 
-        return dataToReturn
+        guard let credentials = self.credentials else {
+            return data
+        }
+
+        let keyPair = try credentials.privateKeyWrap.getKeyPair()
+
+        return try credentials.crypto.authEncrypt(data,
+                                                  with: keyPair.privateKey,
+                                                  for: [keyPair.publicKey])
+    }
+
+    private func decrypt(data: Data) throws -> Data {
+        guard !data.isEmpty else {
+            return data
+        }
+
+        guard let credentials = self.credentials else {
+            return data
+        }
+
+        let keyPair = try credentials.privateKeyWrap.getKeyPair()
+
+        return try credentials.crypto.authDecrypt(data,
+                                                  with: keyPair.privateKey,
+                                                  usingOneOf: [keyPair.publicKey],
+                                                  allowNotEncryptedSignature: true)
     }
 
     private func getFileNames(url: URL) throws -> [String] {
@@ -184,7 +182,7 @@ import VirgilCrypto
     }
 }
 
-/// MARK: - Public API
+// MARK: - Public API
 public extension FileSystem {
     /// Write data
     ///

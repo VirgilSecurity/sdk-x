@@ -58,7 +58,7 @@ extension KeyknoxManager {
                        data: data,
                        previousHash: previousHash,
                        publicKeys: publicKeys,
-                       privateKey: privateKey)
+                       privateKeyWrapper: PrivateKeyWrapper(privateKey: privateKey, crypto: self.crypto))
             .start(completion: completion)
     }
 
@@ -75,7 +75,7 @@ extension KeyknoxManager {
                               completion: @escaping (DecryptedKeyknoxValue?, Error?) -> Void) {
         self.pullValue(params: params,
                        publicKeys: publicKeys,
-                       privateKey: privateKey)
+                       privateKeyWrapper: PrivateKeyWrapper(privateKey: privateKey, crypto: self.crypto))
             .start(completion: completion)
     }
 

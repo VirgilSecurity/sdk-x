@@ -186,8 +186,8 @@ private class Config: NSObject, Decodable {
                              serviceUrl: self.serviceURL ?? KeyknoxClient.defaultURL)
     }
 
-    @objc public func setupKeyknoxManager(client: KeyknoxClient) -> KeyknoxManager {
-        return try! KeyknoxManager(keyknoxClient: client)
+    @objc public func setupKeyknoxManager(client: KeyknoxClient, crypto: VirgilCrypto) -> KeyknoxManager {
+        return KeyknoxManager(keyknoxClient: client, crypto: crypto)
     }
 }
 

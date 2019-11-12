@@ -37,42 +37,18 @@
 import Foundation
 import VirgilCrypto
 
-/// Class responsible for managing Keyknox value with E2EE
-@objc(VSSKeyknoxManager) open class KeyknoxManager: NSObject {
-    /// KeyknoxClient instance used for performing queries
-    @objc public let keyknoxClient: KeyknoxClientProtocol
-
-    /// VirgilCrypto
+/// Encryption credentials
+@objc(VSSFileSystemCredentials) open class FileSystemCredentials: NSObject {
+    /// Crypto
     @objc public let crypto: VirgilCrypto
 
-    /// KeyknoxCryptoProtocol implementation
-    public let keyknoxCrypto: KeyknoxCryptoProtocol
+    /// Keypair
+    public let privateKeyWrap: PrivateKeyWrapper
 
-    internal let queue = DispatchQueue(label: "KeyknoxManagerQueue")
-
-    /// Init
-    ///
-    /// - Parameters:
-    ///   - keyknoxClient: KeyknoxClientProtocol implementation
-    ///   - crypto: VirgilCrypto
-    /// - Throws: KeyknoxManagerError.noPublicKeys if public keys array is empty
-    public init(keyknoxClient: KeyknoxClientProtocol, crypto: VirgilCrypto) {
-        self.keyknoxClient = keyknoxClient
+    public init(crypto: VirgilCrypto, privateKeyWrapper: PrivateKeyWrapper) {
         self.crypto = crypto
-        self.keyknoxCrypto = KeyknoxCrypto(crypto: crypto)
+        self.privateKeyWrap = privateKeyWrapper
 
         super.init()
-    }
-
-    /// Init
-    ///
-    /// - Parameters:
-    ///   - accessTokenProvider: AccessTokenProvider implementation
-    ///   - crypto: Crypto
-    /// - Throws: KeyknoxManagerError.noPublicKeys
-    @objc public convenience init(accessTokenProvider: AccessTokenProvider,
-                                  crypto: VirgilCrypto) {
-        self.init(keyknoxClient: KeyknoxClient(accessTokenProvider: accessTokenProvider),
-                  crypto: crypto)
     }
 }

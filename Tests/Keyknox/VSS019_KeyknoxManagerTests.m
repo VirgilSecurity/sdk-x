@@ -59,7 +59,7 @@ static const NSTimeInterval timeout = 20.;
 
     self.keyknoxClient = [self.utils setupKeyknoxClientWithIdentity:identity];
 
-    self.keyknoxManager = [self.utils setupKeyknoxManagerWithClient:self.keyknoxClient];
+    self.keyknoxManager = [self.utils setupKeyknoxManagerWithClient:self.keyknoxClient crypto:self.crypto];
 
     self.keyPair = [self.crypto generateKeyPairAndReturnError:nil];
     XCTAssert(self.keyPair != nil);

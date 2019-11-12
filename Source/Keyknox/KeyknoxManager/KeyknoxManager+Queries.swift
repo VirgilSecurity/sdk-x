@@ -52,20 +52,22 @@ extension KeyknoxManager {
                         data: Data,
                         previousHash: Data?,
                         publicKeys: [VirgilPublicKey],
-                        privateKey: VirgilPrivateKey) -> GenericOperation<DecryptedKeyknoxValue> {
+                        privateKeyWrapper: PrivateKeyWrapper) -> GenericOperation<DecryptedKeyknoxValue> {
         return CallbackOperation { _, completion in
             self.queue.async {
                 do {
-                    let encryptedData = try self.crypto.encrypt(data: data,
-                                                                privateKey: privateKey,
-                                                                publicKeys: publicKeys)
+                    let privateKey = try privateKeyWrapper.getPrivateKey()
+
+                    let encryptedData = try self.keyknoxCrypto.encrypt(data: data,
+                                                                       privateKey: privateKey,
+                                                                       publicKeys: publicKeys)
                     let keyknoxValue = try self.keyknoxClient.pushValue(params: params,
                                                                         meta: encryptedData.0,
                                                                         value: encryptedData.1,
                                                                         previousHash: previousHash)
-                    let decryptedData = try self.crypto.decrypt(encryptedKeyknoxValue: keyknoxValue,
-                                                                privateKey: privateKey,
-                                                                publicKeys: publicKeys)
+                    let decryptedData = try self.keyknoxCrypto.decrypt(encryptedKeyknoxValue: keyknoxValue,
+                                                                       privateKey: privateKey,
+                                                                       publicKeys: publicKeys)
 
                     completion(decryptedData, nil)
                 }
@@ -85,14 +87,16 @@ extension KeyknoxManager {
     /// - Returns: GenericOperation<DecryptedKeyknoxValue>
     open func pullValue(params: KeyknoxPullParams? = nil,
                         publicKeys: [VirgilPublicKey],
-                        privateKey: VirgilPrivateKey) -> GenericOperation<DecryptedKeyknoxValue> {
+                        privateKeyWrapper: PrivateKeyWrapper) -> GenericOperation<DecryptedKeyknoxValue> {
         return CallbackOperation { _, completion in
             self.queue.async {
                 do {
+                    let privateKey = try privateKeyWrapper.getPrivateKey()
+
                     let keyknoxValue = try self.keyknoxClient.pullValue(params: params)
-                    let decryptedData = try self.crypto.decrypt(encryptedKeyknoxValue: keyknoxValue,
-                                                                privateKey: privateKey,
-                                                                publicKeys: publicKeys)
+                    let decryptedData = try self.keyknoxCrypto.decrypt(encryptedKeyknoxValue: keyknoxValue,
+                                                                       privateKey: privateKey,
+                                                                       publicKeys: publicKeys)
 
                     completion(decryptedData, nil)
                 }

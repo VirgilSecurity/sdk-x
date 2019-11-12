@@ -36,8 +36,6 @@
 
 import Foundation
 
-// swiftlint:disable missing_docs
-
 // MARK: - Data extension for hex encoding and decoding
 public extension Data {
     /// Encodes data in hex format
@@ -79,5 +77,3 @@ public extension Data {
         self = data
     }
 }
-
-// swiftlint:enable missing_docs

@@ -62,7 +62,7 @@ static const NSTimeInterval timeout = 20.;
 
     VSSKeyknoxClient *keyknoxClient = [self.utils setupKeyknoxClientWithIdentity:identity];
 
-    VSSKeyknoxManager *keyknoxManager = [self.utils setupKeyknoxManagerWithClient:keyknoxClient];
+    VSSKeyknoxManager *keyknoxManager = [self.utils setupKeyknoxManagerWithClient:keyknoxClient crypto:self.crypto];
 
     self.keyknoxManager = keyknoxManager;
     

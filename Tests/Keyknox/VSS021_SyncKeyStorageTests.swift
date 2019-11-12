@@ -56,7 +56,7 @@ class VSS004_SyncKeyStorageTests: XCTestCase {
         
         let keyPair = try! crypto.generateKeyPair()
 
-        let keyknoxManager = utils.setupKeyknoxManager(client: keyknoxClient)
+        let keyknoxManager = utils.setupKeyknoxManager(client: keyknoxClient, crypto: self.crypto)
 
         self.cloudKeyStorage = CloudKeyStorage(keyknoxManager: keyknoxManager,
                                                publicKeys: [keyPair.publicKey],

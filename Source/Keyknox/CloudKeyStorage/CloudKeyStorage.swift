@@ -83,10 +83,18 @@ import VirgilCrypto
     @objc public convenience init(accessTokenProvider: AccessTokenProvider,
                                   crypto: VirgilCrypto,
                                   publicKeys: [VirgilPublicKey], privateKey: VirgilPrivateKey) throws {
-        let keyknoxManager = try KeyknoxManager(accessTokenProvider: accessTokenProvider,
-                                                crypto: crypto)
+        let keyknoxManager = KeyknoxManager(accessTokenProvider: accessTokenProvider,
+                                            crypto: crypto)
 
         self.init(keyknoxManager: keyknoxManager, publicKeys: publicKeys, privateKey: privateKey)
+    }
+
+    private func getPrivateKeyWrapper() -> PrivateKeyWrapper {
+        return self.getPrivateKeyWrapper(privateKey: self.privateKey)
+    }
+
+    private func getPrivateKeyWrapper(privateKey: VirgilPrivateKey) -> PrivateKeyWrapper {
+        return PrivateKeyWrapper(privateKey: privateKey, crypto: self.keyknoxManager.crypto)
     }
 }
 
@@ -121,7 +129,7 @@ extension CloudKeyStorage: CloudKeyStorageProtocol {
             .pushValue(data: data,
                        previousHash: self.decryptedKeyknoxData?.keyknoxHash,
                        publicKeys: self.publicKeys,
-                       privateKey: self.privateKey)
+                       privateKeyWrapper: self.getPrivateKeyWrapper())
             .startSync()
             .get()
 
@@ -207,7 +215,7 @@ extension CloudKeyStorage: CloudKeyStorageProtocol {
                         .pushValue(data: data,
                                    previousHash: self.decryptedKeyknoxData?.keyknoxHash,
                                    publicKeys: self.publicKeys,
-                                   privateKey: self.privateKey)
+                                   privateKeyWrapper: self.getPrivateKeyWrapper())
                         .startSync()
                         .get()
 
@@ -301,7 +309,7 @@ extension CloudKeyStorage: CloudKeyStorageProtocol {
                         .pushValue(data: data,
                                    previousHash: self.decryptedKeyknoxData?.keyknoxHash,
                                    publicKeys: self.publicKeys,
-                                   privateKey: self.privateKey)
+                                   privateKeyWrapper: self.getPrivateKeyWrapper())
                         .startSync()
                         .get()
 
@@ -369,7 +377,7 @@ extension CloudKeyStorage: CloudKeyStorageProtocol {
                         .pushValue(data: decryptedKeyknoxData.value,
                                    previousHash: decryptedKeyknoxData.keyknoxHash,
                                    publicKeys: publicKeys,
-                                   privateKey: privateKey)
+                                   privateKeyWrapper: self.getPrivateKeyWrapper(privateKey: privateKey))
                         .startSync()
                         .get()
 
@@ -397,7 +405,7 @@ extension CloudKeyStorage: CloudKeyStorageProtocol {
                 do {
                     let response = try self.keyknoxManager
                         .pullValue(publicKeys: self.publicKeys,
-                                   privateKey: self.privateKey)
+                                   privateKeyWrapper: self.getPrivateKeyWrapper())
                         .startSync()
                         .get()
 
